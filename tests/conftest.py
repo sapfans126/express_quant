@@ -4,8 +4,8 @@ conftest.py - dc_tdx测试全局配置/夹具
 """
 import pytest
 from pathlib import Path
-from src.data.dc_tdx import TdxLocalReader, TdxRemoteQuotes
-from src.data.utils.code_utils import (
+from main_xq.data.dc_tdx import TdxLocalReader, TdxRemoteQuotes
+from main_xq.data.utils.code_utils import (
     clean_code, is_index_code, get_market_code, get_code_type
 )
 

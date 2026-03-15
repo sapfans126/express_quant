@@ -4,7 +4,7 @@ test_financial_report.py - 财务报告解析测试
 """
 import pytest
 import pandas as pd
-from src.data.dc_tdx import TdxFinancialReport
+from main_xq.data.dc_tdx import TdxFinancialReport
 
 def test_download_and_parse(test_config):
     """测试财报下载与解析"""
