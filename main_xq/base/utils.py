@@ -19,17 +19,29 @@ def parse_security_code(
         'security_type': '',
         'error': ''
     }
-
     # 参数校验 & 统一转换为字符串值（核心：自动处理枚举实例）
     if not isinstance(symbol, str) or symbol.strip() == '':
         result['error'] = '证券代码不能为空且必须为字符串类型'
         return result
 
-    # 自动提取枚举实例的value，兼容字符串输入
-    if isinstance(security_type, SECURITY_TYPE):
-        sec_type_str = security_type.value  # 枚举实例→字符串
+    # 更健壮的类型判断
+    if security_type is None:
+        sec_type_str = "CN_AS"
+    elif hasattr(security_type, 'value') and hasattr(security_type,'__class__') and security_type.__class__.__name__ == 'SECURITY_TYPE':
+        # 通过属性判断是否为枚举实例
+        sec_type_str = security_type.value
+        print(f"检测到枚举实例: {sec_type_str}")
+    elif isinstance(security_type, str):
+        sec_type_str = security_type
     else:
-        sec_type_str = security_type  # 字符串直接使用
+        # 兜底转换
+        sec_type_str = str(security_type)
+
+    # 确保是字符串
+    sec_type_str = str(sec_type_str)
+
+    # 调试输出
+    print(f"最终使用的证券类型: {sec_type_str}")
 
     # 校验证券类型有效性
     if not SECURITY_TYPE.has_value(sec_type_str):

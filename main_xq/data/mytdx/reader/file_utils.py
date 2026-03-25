@@ -1,46 +1,43 @@
 import os
-from mytdx.config import get_config
 from typing import Optional
 
-class FileUtil():
 
+class FileUtil:
     @staticmethod
-    # 从配置文件读取通达信数据目录
-    def get_tdx_data_dir() -> str:
-        config = get_config()
-        data_dir = config.get("TDX_DATA", "tdx_data_dir")
-
-        # 配置校验：如果未读取到配置，使用默认值（容错）
-        if data_dir is None:
-            data_dir = "C:/MySAS/TDX/vipdoc"
-            print(f"⚠️ 未从mytdx.ini读取到tdx_data_dir，使用默认路径：{self.data_dir}")
-        # else:
-        #     print(f"✅ 从配置文件读取数据目录：{self.data_dir}")
-
-        return  data_dir
-
-
-    @staticmethod
-    def build_file_path(subdir:str, tdx_dir:str=None) -> str:
+    def build_file_path(tdx_dir: str, subdir: Optional[str] = None) -> str:
         """
-        实例方法：合成文件路径（支持多级子目录，如 sh/lday；不校验代码位数）
-        :param subdir: 子目录路径（支持多级，如 sh/lday、sz/minline、ds/day 等）
-        :param tdx_dir: TDX 数据文件目录 (默认"C:/MySAS/TDX/vipdoc")
-        :return: 文件路径
+        合成文件路径（支持多级子目录）
+
+        Args:
+            tdx_dir: TDX 数据文件根目录 (如 "C:/MySAS/TDX/vipdoc")，不能为空
+            subdir: 子目录路径（支持多级，如 "sh/lday"），可选，为 None 或空字符串时不添加子目录
+
+        Returns:
+            完整的文件路径
+
+        Raises:
+            ValueError: 当 tdx_dir 为空时抛出异常
+            TypeError: 当参数类型错误时抛出异常
         """
-        if not isinstance(subdir, str) or subdir.strip() == "":
-            raise ValueError("子目录路径不能为空")
-        subdir_clean = os.path.normpath(subdir.strip())  # 处理多级目录+统一分隔符
+        # 检查 tdx_dir
+        if not isinstance(tdx_dir, str):
+            raise TypeError(f"tdx_dir 必须是字符串类型，当前是 {type(tdx_dir)}")
 
-        if tdx_dir is None or len(tdx_dir) == 0:
-            tdx_data_dir = FileUtil.get_tdx_data_dir()
-        else:
-            tdx_data_dir = tdx_dir
+        tdx_dir_strip = tdx_dir.strip()
+        if not tdx_dir_strip:
+            raise ValueError("TDX 数据文件根目录不能为空")
 
-        # 确定基础目录（tdx_data_dir + 多级subdir）
-        file_path = os.path.join(tdx_data_dir, subdir_clean)
+        # 规范化根目录
+        tdx_data_dir = os.path.normpath(tdx_dir_strip)
 
-        return file_path
+        # 处理子目录
+        if subdir is None or not isinstance(subdir, str) or not subdir.strip():
+            # subdir 为空时，只返回根目录
+            return tdx_data_dir
+
+        # 有有效的子目录时，拼接并返回完整路径
+        subdir_clean = os.path.normpath(subdir.strip())
+        return os.path.join(tdx_data_dir, subdir_clean)
 
     @staticmethod
     def build_file_name(code:str, prefix:str, suffix:str)-> str:
@@ -160,3 +157,10 @@ class FileUtil():
         print(f"✅ 成功读取 {os.path.basename(file_pathname)}，数据大小：{len(raw_data)} 字节")
 
         return raw_data
+
+
+if __name__ == "__main__":
+    tdx_dir = r'C:\MySAS\TDX\vipdoc'
+    sub_dir = r'sh\lday'
+    path = FileUtil.build_file_path(tdx_dir,sub_dir)
+    print(path)
