@@ -125,9 +125,9 @@ class TdxFormatter:
         #
         # return tdx_sub_dir, dtype, scale_factors
 
-if __name__ == "__main__":
-    tds = TdxFormatter.get_tdxfile_format('day')
-    print(tds.sub_dir)
-    print(tds.field_names)
-    print(tds)
+# if __name__ == "__main__":
+#     tds = TdxFormatter.get_tdxfile_format('day')
+#     print(tds.sub_dir)
+#     print(tds.field_names)
+#     print(tds)
 

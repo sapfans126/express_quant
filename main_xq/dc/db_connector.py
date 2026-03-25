@@ -1,4 +1,4 @@
-# main_xq/data/db_connector.py
+# main_xq/dc/db_connector.py
 """
 ExpressQuant（迅驰量化）- 数据库连接工具类
 封装MySQL连接、通用CRUD操作，基于sqlalchemy实现

@@ -89,7 +89,6 @@ def parse_security_code(
 
     return result
 
-
 def parse_security_code_list(
         symbols: list[str],
         security_type: SECURITY_TYPE | str = SECURITY_TYPE.CN_AS # 支持枚举实例/字符串，默认枚举实例
