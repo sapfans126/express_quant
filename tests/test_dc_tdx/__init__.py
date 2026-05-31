@@ -22,13 +22,10 @@ from .test_remote_quotes import (
     test_get_index_data,
     test_get_f10_info
 )
-from .test_financial_report import test_download_and_parse
 
 __all__ = [
     "test_clean_code",
-    "test_is_index_code",
-    "test_get_market_code",
-    "test_get_code_type",
+
     "test_local_reader_init",
     "test_read_daily",
     "test_read_minute",
@@ -38,5 +35,5 @@ __all__ = [
     "test_get_xdxr_data",
     "test_get_index_data",
     "test_get_f10_info",
-    "test_download_and_parse"
+ 
 ]

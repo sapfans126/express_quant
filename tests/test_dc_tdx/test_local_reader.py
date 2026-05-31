@@ -5,11 +5,13 @@ test_local_reader.py - 本地数据读取器测试
 import pytest
 import pandas as pd
 
+
 def test_local_reader_init(local_reader):
     """测试本地读取器初始化"""
     assert local_reader is not None
     assert local_reader.tdxdir is not None
     assert local_reader.reader is not None
+
 
 def test_read_daily(local_reader, test_config):
     """测试日线读取"""
@@ -33,6 +35,7 @@ def test_read_daily(local_reader, test_config):
     else:
         pytest.skip("本地无600177数据，跳过测试")
 
+
 def test_read_minute(local_reader):
     """测试分钟线读取"""
     # 测试1分钟线
@@ -50,6 +53,7 @@ def test_read_minute(local_reader):
         assert isinstance(df_5min, pd.DataFrame)
     else:
         pytest.skip("本地无600177 5分钟线数据，跳过测试")
+
 
 def test_read_block(local_reader):
     """测试板块数据读取"""

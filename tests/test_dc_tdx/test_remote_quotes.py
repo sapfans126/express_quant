@@ -5,9 +5,11 @@ test_remote_quotes.py - 远程行情客户端测试
 import pytest
 import pandas as pd
 
+
 def test_remote_connect(remote_quotes):
     """测试远程连接（兼容模式）"""
     assert remote_quotes.connect() is True
+
 
 def test_get_hist_kline(remote_quotes, test_config):
     """测试股票K线获取"""
@@ -30,6 +32,7 @@ def test_get_hist_kline(remote_quotes, test_config):
     df_error = remote_quotes.get_hist_kline(symbol="000001")
     assert df_error is None
 
+
 def test_get_xdxr_data(remote_quotes):
     """测试除权除息数据"""
     df_xdxr = remote_quotes.get_xdxr_data(symbol="600177")
@@ -40,6 +43,7 @@ def test_get_xdxr_data(remote_quotes):
         assert "cash_div" in df_xdxr.columns
     else:
         pytest.skip("未获取到600177除权除息数据，跳过测试")
+
 
 def test_get_index_data(remote_quotes, test_config):
     """测试指数数据获取"""
@@ -60,6 +64,7 @@ def test_get_index_data(remote_quotes, test_config):
     # 测试错误场景：股票用指数接口
     df_error = remote_quotes.get_index_data(index_code="600177")
     assert df_error is None
+
 
 def test_get_f10_info(remote_quotes):
     """测试F10数据获取"""

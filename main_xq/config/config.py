@@ -4,7 +4,6 @@ from typing import Any, List, Tuple, Optional
 
 
 # ===================== 修复的MultiOptionConfigParser =====================
-# ===================== 修复的MultiOptionConfigParser =====================
 class MultiOptionConfigParser(configparser.ConfigParser):
     """支持重复option的配置解析器（彻底解决DuplicateOptionError）"""
 
@@ -244,6 +243,49 @@ class MyTdxConfig(BaseConfig):
         super().__init__("mytdx.ini")
 
 
+# config.py 中添加以下内容（在 AkShareConfig 类之后）
+
+class MySQLConfig(BaseConfig):
+    """mysql.ini 配置管理类"""
+
+    def __init__(self):
+        super().__init__("mysql.ini")
+
+    def get_connection_config(self) -> dict:
+        """获取数据库连接配置（用于DBConnector）"""
+        return {
+            'host': self.get('mysql', 'host', default='localhost'),
+            'port': self.getint('mysql', 'port', default=3306),
+            'user': self.get('mysql', 'user', default='root'),
+            'password': self.get('mysql', 'password', default=''),
+            'database': self.get('mysql', 'database', default='expressquant'),
+            'charset': self.get('mysql', 'charset', default='utf8mb4'),
+            'pool_size': self.getint('connection_pool', 'pool_size', default=10),
+            'pool_recycle': self.getint('connection_pool', 'pool_recycle', default=3600),
+            'connect_timeout': self.getint('connection_pool', 'connect_timeout', default=10),
+            'echo': self.getboolean('performance', 'echo', default=False),
+            'batch_insert_size': self.getint('performance', 'batch_insert_size', default=1000),
+        }
+
+
+# 添加 MySQL 配置的全局单例
+_mysql_config_instance: Optional[MySQLConfig] = None
+
+
+def get_mysql_config() -> MySQLConfig:
+    """获取MySQL配置单例"""
+    global _mysql_config_instance
+    if _mysql_config_instance is None:
+        try:
+            _mysql_config_instance = MySQLConfig()
+        except FileNotFoundError:
+            print("警告：mysql.ini 配置文件不存在，使用默认配置")
+            # 可以返回一个带默认配置的实例，或者返回 None
+            # 这里选择创建默认配置实例（但文件不存在会报错，所以需要处理）
+            raise
+    return _mysql_config_instance
+
+
 class AkShareConfig(BaseConfig):
     """akshare.ini 配置管理类"""
 
@@ -311,15 +353,13 @@ if __name__ == "__main__":
             options = tdx_cfg.list_options_in_section(sec)
             print(f"Section [{sec}] 下的option: {options}")
 
-        tdx_data_dir = tdx_cfg.get(section='TDX_DATA',key='tdx_data_dir')
+        tdx_data_dir = tdx_cfg.get(section='TDX_DATA', key='tdx_data_dir')
         print(tdx_data_dir)
 
         # 解析服务器列表（根据实际section/key调整！）
         # 【重要】请根据上面打印的实际名称修改下面的section和key
         hq_hosts = tdx_cfg.get_list_tuples("TDX_SERVER", "hq_hosts")
         print(f"\n解析到的行情服务器列表: {hq_hosts}")
-
-
 
         # 2. 测试AkShare配置（容错处理）
         print(f"\n=== AkShare配置信息 ===")
